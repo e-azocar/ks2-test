@@ -1,9 +1,9 @@
 import { createBrowserRouter } from 'react-router'
-import App from './App'
 import LoginPage from './pages/login'
 import RegisterPage from './pages/register'
 import { protectedLoader, publicOnlyLoader } from './store/authLoader'
 import ProtectedLayout from './layouts/protected-layout'
+import Inmuebles from './pages/inmuebles'
 
 const router = createBrowserRouter([
   {
@@ -13,7 +13,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <App />,
+        element: <Inmuebles />,
       },
     ],
   },
