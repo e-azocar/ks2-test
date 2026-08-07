@@ -9,19 +9,57 @@ import {
   UpdatePropertyDto,
   UpdatePropertyStatusDto,
 } from './properties.dto';
+import { PropertiesQuery } from 'src/types/properties';
 
 @Injectable()
 export class PropertiesService {
   constructor(private prisma: PrismaService) {}
 
-  async getAll() {
+  async getAll(query: PropertiesQuery, userId: string) {
+    const where = {
+      deletedAt: null,
+      ...(query.onlyMine && { sellerId: userId }),
+      ...(query.status && { status: query.status }),
+      ...(query.propertyTypeId && { propertyTypeId: query.propertyTypeId }),
+      ...(query.minPrice !== undefined && { price: { gte: query.minPrice } }),
+      ...(query.maxPrice !== undefined && { price: { lte: query.maxPrice } }),
+    };
+
     const properties = await this.prisma.property.findMany({
-      where: { deletedAt: null },
+      where: {
+        ...where,
+        ...(query.search && {
+          address: { contains: query.search, mode: 'insensitive' },
+        }),
+      },
       omit: {
         deletedAt: true,
       },
+      skip: (query.page! - 1) * query.limit!,
+      take: query.limit,
+      orderBy: {
+        [query.orderBy!]: query.order,
+      },
     });
-    return properties;
+
+    const total = await this.prisma.property.count({
+      where: {
+        ...where,
+        ...(query.search && {
+          address: { contains: query.search, mode: 'insensitive' },
+        }),
+      },
+    });
+
+    return {
+      data: properties,
+      meta: {
+        total,
+        page: query.page,
+        limit: query.limit,
+        totalPages: Math.ceil(total / query.limit!),
+      },
+    };
   }
 
   async getOne(id: string) {

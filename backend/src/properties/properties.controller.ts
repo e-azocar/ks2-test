@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import {
   UpdatePropertyDto,
   UpdatePropertyStatusDto,
 } from './properties.dto';
+import type { PropertiesQuery } from 'src/types/properties';
 
 @UseGuards(AuthGuard)
 @Controller('inmuebles')
@@ -23,8 +25,22 @@ export class PropertiesController {
   constructor(private propertiesService: PropertiesService) {}
 
   @Get('/')
-  async getAll() {
-    return this.propertiesService.getAll();
+  async getAll(@Query() query: PropertiesQuery, @Req() req: AuthRequest) {
+    return this.propertiesService.getAll(
+      {
+        ...query,
+        onlyMine: query.onlyMine || false,
+        page: Number(query.page) || 1,
+        limit: Number(query.limit) || 10,
+        orderBy: query.orderBy || 'createdAt',
+        order: query.order || 'desc',
+        maxPrice:
+          query.maxPrice !== undefined ? Number(query.maxPrice) : undefined,
+        minPrice:
+          query.minPrice !== undefined ? Number(query.minPrice) : undefined,
+      },
+      req.user!.sub,
+    );
   }
 
   @Get('/:id')
