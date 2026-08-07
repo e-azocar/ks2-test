@@ -23,7 +23,7 @@ export function PropertyFilters({
             <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
-              placeholder="Buscar por dirección, título..."
+              placeholder="Buscar por dirección"
               value={filters.search}
               onChange={(e) => onFilterChange({ search: e.target.value })}
               className="w-full rounded-xl border border-slate-300 bg-transparent py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none dark:border-slate-700 dark:text-white"

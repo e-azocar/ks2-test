@@ -7,6 +7,9 @@ import { useAuthStore } from '../store/useAuthStore'
 import { Button } from './button'
 import { Modal } from './modal'
 import EditInmueble from './EditInmueble'
+import { toast } from 'sonner'
+import type { AxiosError } from 'axios'
+import type { HttpError } from '../types/common'
 
 const InmuebleDetail = ({
   inmuebleId,
@@ -29,9 +32,36 @@ const InmuebleDetail = ({
       const response = await api.get<InmuebleWithDetails>(`/inmuebles/${id}`)
       setInmueble(response.data)
     } catch (error) {
-      console.log(error)
+      const e = error as AxiosError<HttpError>
+      return toast.error(e.response?.data.message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const updateStatus = async (id: string, status: string) => {
+    try {
+      await api.patch(`/inmuebles/${id}/estado`, { status })
+      getInmuebles()
+      getInmueble(id)
+      toast.success(
+        `Inmueble marcado como ${inmuebleStatus[status as keyof typeof inmuebleStatus]}`,
+      )
+    } catch (error) {
+      const e = error as AxiosError<HttpError>
+      return toast.error(e.response?.data.message)
+    }
+  }
+
+  const deleteInmueble = async (id: string) => {
+    try {
+      await api.delete(`/inmuebles/${id}`)
+      getInmuebles()
+      closeDetail()
+      return toast.success('Inmueble eliminado exitosamente')
+    } catch (error) {
+      const e = error as AxiosError<HttpError>
+      return toast.error(e.response?.data.message)
     }
   }
 
@@ -52,7 +82,7 @@ const InmuebleDetail = ({
   if (inmueble) {
     return (
       <>
-        <aside className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <aside className="w-full rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <div className="flex items-start justify-between gap-4">
             <div>
               <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
@@ -146,15 +176,48 @@ const InmuebleDetail = ({
               </p>
 
               <div className="mt-3 flex items-center gap-3">
-                <Button variant="primary" onClick={() => setIsOpen(true)}>
-                  Editar Inmueble
+                <Button
+                  variant="primary"
+                  onClick={() => setIsOpen(true)}
+                  disabled={inmueble.status === 'SOLD'}
+                >
+                  Editar
                 </Button>
                 <Button
                   variant="destructive"
-                  onClick={() => alert('Eliminar inmueble')}
+                  onClick={() => deleteInmueble(inmueble.id)}
+                  disabled={inmueble.status === 'SOLD'}
                 >
-                  Eliminar Inmueble
+                  Eliminar
                 </Button>
+              </div>
+
+              <div className="flex mt-3 items-center gap-3">
+                {inmueble.status === 'AVAILABLE' && (
+                  <Button
+                    variant="default"
+                    onClick={() => updateStatus(inmueble.id, 'RESERVED')}
+                  >
+                    Marcar como reservado
+                  </Button>
+                )}
+
+                {inmueble.status === 'RESERVED' && (
+                  <>
+                    <Button
+                      variant="default"
+                      onClick={() => updateStatus(inmueble.id, 'AVAILABLE')}
+                    >
+                      Marcar como disponible
+                    </Button>
+                    <Button
+                      variant="default"
+                      onClick={() => updateStatus(inmueble.id, 'SOLD')}
+                    >
+                      Marcar como vendido
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           )}
