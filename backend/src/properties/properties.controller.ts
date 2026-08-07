@@ -11,13 +11,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
-import { AuthGuard, type AuthRequest } from 'src/auth/auth.guard';
+import { AuthGuard } from 'src/auth/auth.guard';
 import {
   CreatePropertyDto,
   UpdatePropertyDto,
   UpdatePropertyStatusDto,
 } from './properties.dto';
 import type { PropertiesQuery } from 'src/types/properties';
+import type { AuthRequest } from 'src/types/auth';
 
 @UseGuards(AuthGuard)
 @Controller('inmuebles')

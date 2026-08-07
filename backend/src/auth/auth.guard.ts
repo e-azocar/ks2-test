@@ -5,17 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
-
-interface UserPayload {
-  sub: string;
-  email: string;
-}
-
-export interface AuthRequest extends Request {
-  cookies: Record<string, string | undefined>;
-  user?: UserPayload;
-}
+import { AuthRequest, UserPayload } from 'src/types/auth';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

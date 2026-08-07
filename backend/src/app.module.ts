@@ -7,6 +7,7 @@ import { CatalogController } from './catalog/catalog.controller';
 import { CatalogService } from './catalog/catalog.service';
 import { CatalogModule } from './catalog/catalog.module';
 import { PropertiesModule } from './properties/properties.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { PropertiesModule } from './properties/properties.module';
     AuthModule,
     CatalogModule,
     PropertiesModule,
+    UsersModule,
   ],
   controllers: [CatalogController],
   providers: [PrismaService, CatalogService],

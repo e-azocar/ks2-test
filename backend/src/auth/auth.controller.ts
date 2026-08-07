@@ -10,7 +10,8 @@ import {
 import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto } from './auth.dto';
 import type { Response } from 'express';
-import { AuthGuard, type AuthRequest } from './auth.guard';
+import { AuthGuard } from './auth.guard';
+import type { AuthRequest } from 'src/types/auth';
 
 @Controller('auth')
 export class AuthController {
