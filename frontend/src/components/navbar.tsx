@@ -33,9 +33,9 @@ export function Navbar() {
           <NavLink to="/" className={navLinkClasses}>
             Inmuebles
           </NavLink>
-          {/* <NavLink to="/usuarios" className={navLinkClasses}>
+          <NavLink to="/usuarios" className={navLinkClasses}>
             Usuarios
-          </NavLink> */}
+          </NavLink>
         </nav>
 
         <div className="items-center gap-4 flex">

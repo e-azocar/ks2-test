@@ -8,6 +8,7 @@ import type { Inmueble, InmuebleFilters, TipoInmueble } from '../types/inmueble'
 import { api } from '../lib/api'
 import { Pagination } from '../components/pagination'
 import { PropertyFilters } from '../components/FilterInmuebles'
+import type { ListResponse } from '../types/common'
 
 const Inmuebles = () => {
   const [inmuebles, setInmuebles] = useState<Inmueble[]>([])
@@ -65,7 +66,9 @@ const Inmuebles = () => {
     const query = new URLSearchParams(cleanParams).toString()
 
     try {
-      const response = await api.get(`/inmuebles?${query}`)
+      const response = await api.get<ListResponse<Inmueble>>(
+        `/inmuebles?${query}`,
+      )
       setMetadata({
         totalPages: response.data.meta.totalPages,
         page: response.data.meta.page,

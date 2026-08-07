@@ -3,7 +3,9 @@ import LoginPage from './pages/login'
 import RegisterPage from './pages/register'
 import { protectedLoader, publicOnlyLoader } from './store/authLoader'
 import ProtectedLayout from './layouts/protected-layout'
-import Inmuebles from './pages/inmuebles'
+import InmueblesPage from './pages/inmuebles'
+import UsersPage from './pages/usuarios'
+import ProfilePage from './pages/profile'
 
 const router = createBrowserRouter([
   {
@@ -13,7 +15,15 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Inmuebles />,
+        element: <InmueblesPage />,
+      },
+      {
+        path: '/usuarios',
+        element: <UsersPage />,
+      },
+      {
+        path: '/perfil',
+        element: <ProfilePage />,
       },
     ],
   },
