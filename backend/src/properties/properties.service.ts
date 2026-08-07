@@ -68,11 +68,23 @@ export class PropertiesService {
       omit: {
         deletedAt: true,
       },
+      include: {
+        seller: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
     return property;
   }
 
   async create(dto: CreatePropertyDto, sellerId: string) {
+    if (dto.price <= 0)
+      throw new ConflictException('El precio debe ser mayor a 0');
+
     const property = await this.prisma.property.create({
       data: {
         ...dto,
@@ -91,6 +103,9 @@ export class PropertiesService {
 
     if (existingProperty.status === 'SOLD')
       throw new ConflictException('No se puede actualizar un inmueble vendido');
+
+    if (dto.price <= 0)
+      throw new ConflictException('El precio debe ser mayor a 0');
 
     const property = await this.prisma.property.update({
       where: { id, sellerId },
